@@ -6,12 +6,19 @@
 
 package com.yahoo.messenger.util;
 
-import com.yahoo.messenger.exception.HttpException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import javax.microedition.io.Connector;
-import javax.microedition.io.HttpConnection;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+
+import com.yahoo.messenger.exception.HttpException;
 
 
 public class HttpUtils {
@@ -34,36 +41,28 @@ public class HttpUtils {
         }
 
         String s = new String();
-        HttpConnection hc = (HttpConnection)Connector.open(cs);
-
+        HttpClient hcli = new DefaultHttpClient();
+        HttpGet httpGet = new HttpGet(cs);
+        
         if (authentication != null) {
 
             if (!authentication.isUsingOAuth())
-                hc.setRequestProperty("Cookie", authentication.getCookie());
+            	httpGet.setHeader("Cookie", authentication.getCookie());
             else
-                hc.setRequestProperty("Authorization", "OAuth");
+            	httpGet.setHeader("Authorization", "OAuth");
 
         }
 
         try {
+        	HttpResponse response = hcli.execute(httpGet);
+        	
+            int rc = response.getStatusLine().getStatusCode();
 
-            int rc = hc.getResponseCode();
+            InputStream in = response.getEntity().getContent();
 
-            InputStream in = hc.openInputStream();
+            s = EntityUtils.toString(response.getEntity());
 
-            try {
-
-                byte[] capture = new byte[in.available()];
-                int amount = in.read(capture);
-                s = new String(capture);
-
-            } catch (Exception e) {
-
-            } finally {
-                in.close();
-            }
-
-            if (rc != HttpConnection.HTTP_OK) {
+            if (rc != HttpStatus.SC_OK) {
 
                 if (YahooMessengerConstants.debugHttpRequestResponse == 1) {
                     System.err.println("ERROR HTTP RETURN CODE IS: " + rc);
@@ -74,7 +73,7 @@ public class HttpUtils {
             }
 
         } finally {
-            hc.close();
+            //hcli.close();
         }
 
         if (YahooMessengerConstants.debugHttpRequestResponse == 1) {
@@ -92,28 +91,29 @@ public class HttpUtils {
 
         String s = new String();
 
-        HttpConnection hc = (HttpConnection)Connector.open(cs);
-        hc.setRequestMethod(HttpConnection.POST);
+        DefaultHttpClient hcli = new DefaultHttpClient();
+        HttpPost httpPost = new HttpPost(cs);
 
         if (authentication == null) {
             throw new HttpException(HttpException.NO_AUTHENTICATION_GIVEN);
         }
 
         if (!authentication.isUsingOAuth())
-            hc.setRequestProperty("Cookie", authentication.getCookie());
+            httpPost.setHeader("Cookie", authentication.getCookie());
         else
-            hc.setRequestProperty("Authorization", "OAuth");
+        	httpPost.setHeader("Authorization", "OAuth");
 
 
         if (content != null) {
 
-            hc.setRequestProperty("Content-Type", "application/json;charset=utf-8");
-            hc.setRequestProperty("Content-Length", ""+content.length());
+        	httpPost.setHeader("Content-Type", "application/json;charset=utf-8");
+        	httpPost.setHeader("Content-Length", ""+content.length());
 
-            OutputStream os = hc.openOutputStream();
-            os.write(content.getBytes());
+        	httpPost.setEntity(new StringEntity(content));
             
         }
+        
+        HttpResponse response = hcli.execute(httpPost);
 
         if (YahooMessengerConstants.debugHttpRequestResponse == 1) {
             System.out.println("HTTP POST SENT:");
@@ -124,24 +124,11 @@ public class HttpUtils {
 
         try {
 
-            int rc = hc.getResponseCode();
+            int rc = response.getStatusLine().getStatusCode();
 
+            s = EntityUtils.toString(response.getEntity());
 
-            InputStream in = hc.openInputStream();
-
-            try {
-
-                byte[] capture = new byte[in.available()];
-                int amount = in.read(capture);
-                s = new String(capture);
-
-            } catch (Exception e) {
-
-            } finally {
-                in.close();
-            }
-
-            if (rc != HttpConnection.HTTP_OK) {
+            if (rc != HttpStatus.SC_OK) {
 
                 if (YahooMessengerConstants.debugHttpRequestResponse == 1) {
                     System.err.println("ERROR HTTP RETURN CODE IS: " + rc);
@@ -152,7 +139,7 @@ public class HttpUtils {
             }
 
         } finally {
-            hc.close();
+//            hc.close();
         }
 
         if (YahooMessengerConstants.debugHttpRequestResponse == 1) {
