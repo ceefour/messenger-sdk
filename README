@@ -1,3 +1,11 @@
+Ported to Java SE by Hendy Irawan (http://eclipsedriven.blogspot.com)
+
+STILL WON'T WORK. See: https://github.com/yahoo/messenger-sdk/issues#issue/2
+
+I'm now trying to use OpenYMSG: http://sourceforge.net/projects/openymsg/
+
+--------------------------------
+
 This SDK provides an interface to the Yahoo! Messenger API (http://developer.yahoo.com/messenger/) and a sample GUI app both written in Java.
 
 The Messenger SDK contains certain 3rd party open source libraries and tools.  This file summarizes the tools used, their purpose, and the licenses under which they're released.  
