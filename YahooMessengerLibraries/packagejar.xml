@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="create_run_jar" name="Create Runnable Jar for Project YahooMessengerLibraries">
+    <!--this file was created by Eclipse Runnable JAR Export Wizard-->
+    <!--ANT 1.7 is required                                        -->
+    <target name="create_run_jar">
+        <jar destfile="/home/ceefour/Vendor_Dev/yahoo-messenger-sdk-java/YahooMessengerLibraries/dist/YahooMessengerLibraries.jar" filesetmanifest="mergewithoutmain">
+            <manifest>
+                <attribute name="Main-Class" value="a.b.c.D"/>
+                <attribute name="Class-Path" value="."/>
+            </manifest>
+            <zipfileset excludes="META-INF/*.SF" src="/home/ceefour/Vendor_Dev/yahoo-messenger-sdk-java/YahooMessengerLibraries/lib/json.jar"/>
+            <fileset dir="/home/ceefour/Vendor_Dev/yahoo-messenger-sdk-java/YahooMessengerLibraries/build/classes/main"/>
+            <zipfileset excludes="META-INF/*.SF" src="/home/ceefour/.gradle/cache/commons-logging/commons-logging/jars/commons-logging-1.1.1.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/home/ceefour/.gradle/cache/commons-codec/commons-codec/jars/commons-codec-1.3.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/home/ceefour/.gradle/cache/org.apache.httpcomponents/httpcore/jars/httpcore-4.0.1.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/home/ceefour/.gradle/cache/org.apache.httpcomponents/httpclient/jars/httpclient-4.0.3.jar"/>
+        </jar>
+    </target>
+</project>
